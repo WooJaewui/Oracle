@@ -1,0 +1,172 @@
+
+ # SQL, DB, DBMS.
+
+용어정리.
+SQL : DBMS에게 질의하는 명령어. client data요청을 대신해서 질의하는 프로그래밍 언어이다.
+DBMS : Database + Management System.
+Database : 여러 사람이 공유하여 사용할 목적으로 체계화해 통합한 data 집합이다.
+
+원리.
+컴퓨터 마다 각각 data를 저장하고 사용했는데, 네트워크가 발달하면서 같이 사용해야 되는 data를
+한 곳에 모아서 사용하게되었다.
+
+단점.
+동시에 data를 같이 쓰면서 dead Lock같은 오류가 발생할 수 있다.
+여러명이 사용하다보니 DataServer에 성능에 문제가 발생할 수 있다.
+보안 문제가 발생할 수 있다.
+
+이런 단점을 보완하기 위해 관리자를 두었다. ( 관리자를 통해 data를 사용한다 )
+
+DDL : create/alter/drop.
+DML : select/insert/update/delete.
+DCL : grant/revoke.
+
+
+ # DBMS 설치.
+
+Oracle Express 버젼을 다운 받아서 사용. ( enterprise는 유료이다 )
+Express은 상용화 할 수 없다. ( 여러 제약이 걸려있어서 교육용으로만 사용가능 )
+반드시 관리자 계정으로 실행해야된다.
+ 
+EM Express URL : http://localhost:5500/em  ( Enterprise Manager - web으로 database 관리. )
+
+SQLplus : dos기반의 client와 Oracle을 연결해주는 API.
+SQL developer : window기반의 client와 Oracle을 연결해주는 API.
+
+초기사용자 : sys 
+비밀번호 : 설치 때 설정한 비밀번호.
+
+예제 : sys as sysdba
+
+
+ # SQL Developer 준비하기.
+
+다운로드
+Oracle -> Developer Tools -> SQL Developer -> Windows 32-bit/64-bit down.
+
+사용.
++ 누르고 -> name설정 -> 사용자이름/비밀번호 -> SYSDBA 롤 설정 -> localhost/1521/xe -> 테스트 : 성공.
+
+
+
+ # 오라클 PDB 서버에 접속하기.
+
+원리.
+DB에 가상DB를 설치해서 사용하는 방식. ( PLUGGABLE DATABASE )
+
+Oracle DATABASE 2가지.
+
+1. CDB ( Contain DATABASE ) 
+2. PDB ( PLUGGABLE DATABASE ) - 가상데이터베이스.
+
+용어.
+SEED : 가상 PDB를 만들기 위한 템플릿이다.
+XEPDB1 : Oracle을 설치하면 기본으로 만들어진 PDB이다.
+
+PDB확인.
+select name from v$pdbs; ( cmd에서 적기 )
+
+실행.
+서비스 이름 : xepdb1으로 설정해주면 된다.
+
+팁.
+CDB를 망가뜨리면 재설치를 해야되지만, PDB는 잘못되면 다시 만들면 된다.
+이름을 바꾸고 정보를 바꾸면 새로운 db가 생성된다.
+CDB와 PDB는 서로 개별적이다.
+
+원격으로 접속하는 방법.
+EXEC DBMS_XDB.SETLISTENERLOCALACCESS(FALSE);
+-> 호스트 이름을 IP주소 설정 -> 방화벽 설정.
+( true면 로컬호스트만 접속, false 다른곳에서 접속 가능 )
+
+
+ # 수업용 사용자와 데이터베이스 생성하기.
+
+설치 후 계정 
+1. 관리자계정 Admin accounts
+ - SYS : 전체적인 데이터를 관리하는 것. ( SYSDBA )
+ - SYSTEM : 전체적인 데이터 관리는 하지 못한다. 
+2. Sample 데이터 계정. 
+ - BI ( Business Intelligence )
+ - HR ( Human Resources )
+ - OE ( Order Entry )
+ - PM ( Product Media )
+ - SH ( Sales )
+ - IX ( Information Exchange )
+
+원리.
+Table(스키마) : Database의 개념상의 데이터 ( entity )
+테이블 스페이스에 테이블(스키마)들이 존재한다.
+물리적으로 어떻게 저장되는지에 대해 완벽히 알 필요까지는 없다.
+
+DBA로 접속하기.
+보기 -> DBA -> 접속.
+
+테이블추가하기.
+저장영역 -> 테이블스페이스 -> 새로만들기 -> 이름 디렉토리 설정 -> 파일크기 설정 -> 자동 확장 설정.
+
+팁.
+임시로 사용할 수 있는 data 보관소가 필요하다. ( 뒤에 자세히 배움 )
+
+사용자설정.
+보안 -> 사용자 -> 새로만들기 -> 사용자이름, 비밀번호 설정 -> 기본,임시 테이블스페이스 설정 -> 시스템 권한 설정.
+무조건 대문자로 만들 것. ( 소문자면 로그인 할 때 " " 처리를 해줘야 함 )
+
+사용하기.
+새 데이터베이스 만들기 -> 이름설정 -> 사용자이름 새로만든 것으로 변경 -> 롤 기본값 -> 테스트 -> 접속.
+
+
+ # MEMBER Table 생성하기.
+
+DDL : 생성/삭제. ( CREATE / ALTER / DROP )
+DML : 조작하기. ( CRUD )
+DCL : 권한부여. ( Oracle은 사용자 생성때 설정한다 )
+
+테이블 생성하기.
+CREATE TABLE MEMBER
+(
+    ID              VARCHAR2(50),
+    PWD           VARCHAR2(50),
+    NAME         VARCHAR2(50),
+    GENDER       VARCHAR2(50),
+    AGE            NUMBER,
+    BIRTHDAY    VARCHAR2(50),
+    PHONE        VARCHAR2(50),
+    REGDATE      DATE
+);
+CTRL + ENTER => TABLE 생성.
+
+확인.
+서버 -> 테이블 -> +표시 안에 TABLENAME 확인.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
