@@ -1,0 +1,124 @@
+
+ 2일차.
+
+
+ # 오라클 데이터 형식. ( 문자 )
+
+전체형식.
+1. Oracle Built-in Data Types.
+2. ANSI, DB2, and SQL/DS DATA Types
+3. User-Defined Types
+4. Oracle-Supplied Types
+5. Data Type Comparison Rules
+6. Data Conversion.
+
+Oracle Built-in Data Types.
+
+1. Character 형식. ( 문자 )
+2. Numeric 형식. ( 숫자 )
+3. Date 형식. ( 날짜 )
+4. LOB 형식. ( 큰 형식 )
+
+Value Type
+
+Type             Example
+Character       'A', '148', 'nEWlec'
+Numeric         38, 3,85, 3.85F
+Date             '2013-02-09'
+TIMESTAMP    '2013-06-03 10.38.29.00000'
+
+Character 형식.
+
+CHAR(숫자)          1byte          ( 고정 길이에 사용 - 검색이 빠르지만 빈 공간이 많을 수 있다 )
+VARCHAR(숫자)     1byte          ( 구분자를 통해서 데이터를 나눠준다 - 검색에 느리다 )
+NCHAR(숫자)        2 or 3byte    ( National Character - 세계여러 나라의 단어를 모두 사용가능 )
+NVARCHAR(숫자)   2 or 3byte    ( National Character - 세계여러 나라의 단어를 모두 사용가능 )
+
+문자의 길이 및 바이트 확인.
+
+SELECT LENGTH( 'AB' ) FROM DUAL; ( 문자의 길이 확인 )
+SELECT LENGTHB( '한글' ) FROM DUAL; ( 문자의 BYTE 확인 )
+
+영문자가 아닌 문자는 3Byte or 2Byte를 사용한다.
+한글자나 다른 문자는 CHAR(2 CHAR) 또는 NCHAR를 쓰는데, NCHAR가 더 효율적이다.
+
+문자형의 최대저장크기.
+
+CHAR / VARCHAR2 = 4000BYTE. ( 한글자에 1byte )
+NCHAR / NVARCHAR2 = 2000BYTE. ( 한글자에 2byte )
+
+VARCHAR와 VARCHAR2
+
+VARACH와 VARCHAR2는 거의 모든 부분에서 같지만, 
+ORACLE에서는 VARCHAR2를 쓰기는 권장한다. ( VARCHAR가 사라질 수 있다고 함 )
+
+대용량 데이터 저장.
+
+LONG : 2Gbyte까지 표현. ( 옛날방식 - 제약이 많다 )
+CLOB : 대용량 텍스트 데이터 타입 ( 최대 4Gbyte )
+NCLOB : 대용량 텍스트 유니코드 데이터 타입 ( 최대 4Gbyte )
+
+
+
+ # 오라클 데이터 형식. ( 숫자, 날짜 형식 )
+
+숫자형식.
+NUMBER(4)       	최대 4자로 이루어진 숫자.
+NUMBER(6,2)        소수점 2자리를 포함하는 최대 6자리 숫자.
+NUMBER(6,-2) 	소수점 -2자리에서 반올림하는 최대 6자리 숫자.   
+NUMBER		NUMBER( 38, * )
+NUMBER( *,5 )      NUMBER( 38, 5 )
+
+날짜형식.
+DATE 		년,월,일까지 표현. ( 숫자형 - 4712BC ~ 9999 AD - millisecond기준 )
+TIMESTAMP	년,월,일,시,분,초까지 표현. ( 숫자형 )
+
+지역정보 설정. ( 나중에 자세히 알아봄 )
+TIMESTAMP WITH TIME ZONE 
+TIMESTAMP WITH LOCAL TIME ZONE
+
+지역정보 확인.
+SELECT * FROM NLS_DATABASE_PARAMETERS.
+
+
+ # 테이블 수정하기.
+
+수정하기.
+ALTER TABLE MEMBER MODIFY ID NVARCHAR2(20);
+
+제거하기.
+ALTER TABLE MEMBER DROP COLUMN AGE;
+
+추가하기.
+ALTER TABLE MEMBER EMAIL VARCHAR2(200);
+
+주의사항.
+DATA를 수정할때 변화하는 테이블 수정에 DATA가 문제가 되는지 확인하고 변경해야된다.
+
+주석.
+워크시트에서 '--'으로 표현한다.
+
+
+ # SQL 쿼리 연습 테이블 준비.
+
+예약어로 이름 사용하기.
+TABLE을 만들 때 예약어를 사용하려면 CREATE TABLE "예약어"로 만들어야된다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
