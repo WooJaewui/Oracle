@@ -1,0 +1,436 @@
+
+ 4일차 - 17 ~
+
+
+ # 패턴 비교 연산자.
+
+패턴비교연산자.
+% : '박%'; => 박으로 시작되는 DATA 찾기.
+LIKE : = 대신에 LIKE를 써서 패턴을 찾는데 사용한다.
+_ : '박_';   => 박으로 시작되고 2글자인 DATA 찾기.
+
+연습.
+회원 중에서 '박'씨 성의 회원을 조회하시오.
+SELECT * FROM MEMBER WHERE NAME LIKE '박%';
+회원 중에서 '박'씨 성에 외자인 회원을 조회하시오.
+SELECT * FROM MEMBER WHERE NAME LIKE '박_';
+
+응용.
+COLUMN NOT LIKE;
+COLUMN LIKE '%DATA%'
+
+
+
+ # 정규식을 이용한 패턴 비교. ( 숫자 )
+
+용어.
+정규식 regular expression : 문자열을 찾을때 사용하는 오래된 검색 방법이다.
+= regex 
+
+전화번호 검색.
+010-xxxx-xxxx
+01[0178]-[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9];
+01[0178]-\d\d\d\d-\d\d\d\d;
+01[0178]-\d{4}-\d{4};
+01[0178]-\d{3,4}-\d{4};
+
+규칙.
+^ : regex를 시작할때 사용.
+$ : regex를 끝낼때 사용.
+
+사용.
+SELECT *FROM MEMBER WHERE REGEXP_LIKE(COLUMN, '01[016789]-\d{3,4}-\d{4}');
+SELECT *FROM MEMBER WHERE REGEXP_LIKE(COLUMN, '01[016789]-\d{3,4}-\d{4}');
+
+확인.
+https://regexlib.com/ -> test에 가서 확인할 수 있다.
+
+주의사항.
+Oracle에서 사용하려면 REGEXP_LIKE를 써야된다.
+
+
+ # 정규식을 이용한 패턴 비교. ( 문자 )
+
+메일검색.
+abcd@abc.com
+\w+@\w+.(org | net | com)
+
+규칙.
+\w : 문자열을 표현.
+\D : 숫자가 아닌 것을 표현. 
+* : 0 이상의 값을 가진다.
++ : 하나 이상의 값을 가진다.
+? : 0 또는 1의 값을 가진다.
+| : or을 표현한다.
+
+주의사항.
+Oracle에서 사용하려면 REGEXP_LIKE를 써야된다.
+
+
+
+ # ROWNUM 그리고 행 제한하기.
+
+원리.
+ROWNUM : 등록된 순서대로 부여된 번호이다.
+
+사용.
+SELECT * FROM TABLE WHERE ROWNUM BETWEEN 1 AND B;
+SELECT * FROM ( SELECT ROWNUM AS ID, TABLE.* FROM TABLE ) WHERE ID BETWEEN A AND B;
+
+주의사항.
+아무것도 설정하지 않은 ROWNUM은 1부터만 사용이 가능하다. ( 요청시 만들어지기 때문 )
+FROM 뒤에 TABLE이 아닌 어떤 자료 형식이 올 수 있다.
+
+SELECT * FROM SELECT 
+
+
+
+ # DISTINCT 중복 값 제거.
+
+사용.
+SELECT DISTINCT COLUMN FROM MEMBER;
+
+주의사항.
+하나의 COLUMN에서만 사용가능하다.
+
+
+
+ # 중간 요약.
+
+SQL -> DBMS -> DATABASE -> DBA -> DML -> CRUD -> 연산자 -> 필터링.
+
+
+
+ # 내장 함수.
+
+함수의 종류.
+문자열 함수, 숫자 함수, 날짜 함수, 변환함수, NULL 관련 함수, 집계함수.
+
+
+
+ # 문자열 함수.
+
+1. SUBSTR( 문자열, 시작위치, 길이 )
+
+SELECT SUBSTR('HELLO', 1, 3) FROM DUAL;
+SELECT SUBSTR('DATA',1,3) FROM DUAL;
+SELECT * FROM TABLE WHERE SUBSTR(COLUMN, 1, 3) ='011';
+SELECT * FROM TABLE WHERE COLUMN BETWEEN A AND B;
+SELECT * FROM TABLE WHERE COLUMN IS NULL AND 
+
+- WHERE절에는 함수를 사용하지 않는게 좋다. ( 보통 함수보다 연산자가 성능이 좋다 )
+
+
+2. LTRIM, RTRIM, TRIM.
+
+SELECT LTRIM('    HELLO   ') FROM DUAL; 
+SELECT RTRIM('    HELLO   ') FROM DUAL; 
+SELECT TRIM('    HELLO   ') FROM DUAL; 
+
+
+3. LOWER, UPPER.
+
+SELECT LOWER('NeWlec') FROM DUAL;
+SELECT UPPER('neWlEc') FROM DUAL; 
+SELECT * FROM TABLE UPPER(COLUMN) = 'DATA';
+
+
+4. REPLACE( 문자열, 찾는 문자열, 바꿀 문자열 )
+
+SELECT REPLACE('STRING', 'STR', 'HI') FROM DUAL;
+SELECT TRANSLATE('STRING', 'STR', 'HI') FROM DUAL;
+
+- TRANSLATE는 찾는 문자열과 다른 문자열의 숫자가 같아야만 제대로 바꿀 수 있다.
+
+
+5. LPAD, RPAD(문자열, 문자열BYTE, 빈공간에 들어갈 문자)
+
+SELECT LPAD('HELLO', 5) FROM DUAL;
+SELECT LPAD('HELLO', 10, '0') FROM DUAL;
+SELECT RPAD('HELLO', 10, '0') FROM DUAL;
+
+- 영어가 아닌 경우에는 문자열BYTE를 잘 설정해야된다.
+
+
+6. INITCAP( 단어의 첫글자를 대문자로 )
+
+SELECT INITCAP('the most') FROM DUAL;
+
+- 모든 단어 첫글자를 대문자로 바꿔준다.
+
+
+7. INSTR(문자열, 검색문자열, 검색위치, 찾을 수);
+
+SELECT INSTR('STRING', 'ST', 4, 2) FROM DUAL;
+
+-위치값을 알려준다.
+
+
+8. LENGTH - 문자열의 길이를 알려줌.
+
+SELECT LENGTH('WHERE ARE YOU') FROM DUAL;
+
+
+
+ # 숫자 내장 함수.
+
+1. ABS(절대값)
+
+SELECT ABS(-30) FROM DUAL;
+
+
+2. SIGN(값)
+
+SELECT SIGN(35) FROM DUAL;
+
+- 양수 : 1, 음수 : -1, 0 = 0.
+
+
+3. ROUND(반올림, 반올림위치)
+
+SELECT ROUND(34.45) FROM DUAL;
+SELECT ROUND(34.45, 2) FROM DUAL;
+
+
+4. POWER(숫자, 제곱)
+
+SELECT POWER(5,2) FROM DUAL;
+
+
+5. SQRT(제곱근)
+
+SELECT POWER(25) FROM DUAL;
+
+
+
+ # 날짜 내장 함수.
+
+1. SYSDATE
+
+SELECT SYSDATE FROM DUAL;      ( 년/월/일 )
+
+
+2. CURRENT_DATE.
+
+SELECT CURRENT_DATE FROM DUAL;   ( 세션의 따른 날짜 데이터 )
+
+
+3. SYSTIMESTAMP
+
+SELECT SYSTIMESTAMP FROM DUAL;   ( 년/월/일 시:분:초 )
+
+
+4. CURRENT_TIMESTAMP
+
+SELECT CURRENT_TIMESTAMP FROM DUAL; ( 년/월/일 시:분:초 )
+
+
+5. EXTRACT(년/월/일/시/분/초) - 원하는 정보만 꺼냄.
+
+SELECT EXTRACT(YEAR FROM SYSDATE) FROM DUAL;
+
+
+6. ADD_MONTHS(날짜, 정수) - MONTH에 정수만큼 추가함.
+
+SELECT ADD_MONTHS(SYSDATE, 1) FROM DUAL;
+SELECT * FROM TABLE WHERE ADD_MONTHS(SYSDATE,-6)<COLUMN;
+
+
+7. MONTHS_BETWEEN( 날짜1, 날짜2 )
+
+SELECT MONTHS_BETWEEN(SYSDATE, TO_DATE('DATE2') FROM DUAL;
+
+
+8. NEXT_DAY( 현재날짜, 다음요일 )
+
+SELECT NEXT_DAY( SYSDATE, '토요일' ) FROM DUAL;
+SELECT NEXT_DAY( SYSDATE, 7 ) FROM DUAL;
+
+
+9. LAST_DAY( 날짜 ) - 이번달에 마지막 날짜를 알려줌.
+
+SELECT LAST_DAY( SYSDATE ) FROM DUAL;
+
+
+10. ROUND( SYSDATE, 'KEYWORD' )
+
+SELECT ROUND( SYSDATE, 'MONTH' ) FROM DUAL; - 월단위로 반올림.
+SELECT ROUND( SYSDATE, 'CC' ) FROM DUAL; - 세기단위로 반올림.
+
+
+11. TO_DATE( 'YYYY-MM-DD HH24:MI:SS' ) - 날짜 표시.
+
+SELECT TO_DATE( '2010-10-20' ) FROM DUAL;              
+
+
+세션 시간과 포맷 변경.
+
+ALTER SESSION SET NLS_DATE_FORMAT ='YYYY-MM-DD HH24:MI:SS';
+ALTER SESSION SET TIME_ZONE ='09:00';           
+
+한국은 +9시간.
+
+
+
+ # 변환함수.
+
+원리.
+숫자 -> 문자열 -> 날짜로 변환을 시켜주는 함수이다.
+
+
+1. TO_CHAR( 숫자, '문자' ) 숫자 -> 문자.
+
+SELECT TO_CHAR( 12345678, '$99,999,999,999.99' ) FROM DUAL;
+SELECT TO_CHAR( 12345678, '99,999,999,999.99' ) FROM DUAL;
+
+9 = 숫자, 0 = 빈자리를 채우는 문자, $ = 숫자 앞에 써서 달러를 표시.
+뒤에 표현하는 문자는 앞에 숫자보다 자리수가 많아야된다.
+소수점 밑에 자리는 반올림된다.
+
+
+2. TO_CHAR( SYSDATE, 'YYYY-MM-DD HH24:MI:SS' ) 날짜 -> 문자.
+
+SELECT TO_CHAR( SYSDATE, 'YYYY-MM-DD HH24:MI:SS' ) FROM DUAL;
+
+
+3. TO_DATE( '년-월-일 시:분:초' , 'YYYY-MM-DD HH24:MI:SS' ) 문자 -> 날짜.
+
+SELECT TO_DATE( '2021-6-10') FROM DUAL;
+SELECT TO_DATE( '2021-6-10, 'YYYY-MM-DD') FROM DUAL;
+
+
+4. TO_NUMBER( 문자열 ) 문자 -> 숫자.
+
+SELECT TO_NUMBER('1994') FROM DUAL;
+
+
+
+ # NULL 관련 함수.
+
+1. NVL( NULL, 대체값 ) - NULL일 때, 대체값으로 바뀜.
+   NVL2 ( NULL, NOTNULL 대체값, NULL 대체값 ) 
+
+SELECT NVL( NULL, 0 ) FROM TABLE;
+SELECT NVL2( NULL, 'DATA' , 'DATA2') FROM TABLE;
+
+
+2. NULLIF( 값1, 값2 ) - NULL을 만들때 사용.
+
+SELECT NULLIF( AGE, 19 ) FROM TABLE;
+
+
+3. DECODE( 기준값, 비교값, 출력값, 비교값, 출력값, 나머지 ) 
+
+SELECT DECODE(SUBSTR(PHONE, 1,3), '011', 'SK', '016', 'KT', '기타') FROM TABLE; 
+
+
+
+ # 집계함수.
+
+SUM, MIN, MAX, COUNT, AVG.
+
+1. COUNT( COLUMN ) - COLUMN의 ROW 갯수를 세준다.
+
+SELECT COUNT( COLUMN ) FROM TABLE; 
+SELECT COUNT( ID ) FROM TABLE;
+SELECT COLUMN, COUNT( ID ) FROM TABLE GROUP BY COLUMN;
+
+NULL은 COUNT하지 않는다. NULL이 아닌 COLUMN으로 COUNT하자.
+GROUP 되거나 집계 된 COLUMN만 SELECT 할 수 있다.
+
+
+2. SUM(COLUMN) - COLUMN의 DATA의 합.
+
+SELECT SUM( COLUMN ) FROM TABLE; 
+
+
+3. MIN(COLUMN) - COLUMN DATA의 최소값.
+
+SELECT MIN( COLUMN ) FROM TABLE;
+
+
+4. MAX(COLUMN) - COLUMN DATA의 최대값.
+
+SELECT MAX( COLUMN ) FROM TABLE; 
+
+
+5. AVG(COLUMN) - COLUMN DATA의 평균값.
+
+SELECT AVG( COLUMN ) FROM TABLE; 
+
+
+
+ # SELECT 구절.
+
+SELECT 구절 순서.
+SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY.
+
+설명.
+FROM : TABLE 급의 데이터를 불러오는 것.
+WHERE : DATA를 필터링하는 것.
+GROUP BY : DATA를 집계 하는 것이다. ( 평균, 카운트 등 )
+HAVING COUNT : GROUP BY로 집계된 데이터를 필터링.
+ORDER BY : 데이터를 정려하는 것이다. ( ASC - 오름차순 , DESC - 내림차순)
+
+실행순서.
+FROM -> CONNECT BY -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY.
+
+주의사항.
+순서가 바뀌어서는 안됨.
+ORDER BY COLUMN까지만 적으면 ASC로 정렬된다. ASC생략가능.
+SELECT에서 사용한 가명은 ORDER BY에서만 사용할 수 있다.
+
+
+
+ # HAVING절.
+
+설명.
+GROUP BY로 집계된 데이터를 필터링한다. 
+WHERE절로는 GROUP BY로 집계된 데이터를 필터링 할 수 없다.
+
+사용.
+SELECT ID, COUNT(COLUMN) FROM TABLE
+GROUP BY ID
+HAVING COUNT(COLUMN) <= A; 
+
+
+
+ # ROW_NUMBER( ), RANK( ), DENSE_RANK( ).
+
+1. ROW_NUMBER( ) OVER ( ORDER BY COLUMN ) - 정렬 후 ROWNUM을 붙인다.
+
+SELECT ROW_NUMBER( ) OVER ( ORDER BY COLUMN1 DESC ), COLUMN2, COLUMN3
+FROM TABLE;
+
+SELECT ROW_NUMBER( ) OVER ( PARTITION BY WRITER_ID ORDER BY COLUMN ), COLUMN
+FROM TABLE;
+
+
+2. RANK ( ) OVER ( ORDER BY COLUMN ) - 정렬 후 등수를 붙인다. ( 같은 DATA는 같은 등수 )
+
+SELECT RANK( ) OVER ( ORDER BY COLUMN1 ), COLUMN2, COLUMN3 
+FROM TABLE;
+
+SELECT RANK( ) OVER ( PARTITION BY WRITER_ID ORDER BY COLUMN ), COLUMN
+FROM TABLE;
+
+
+3. DENSE_RANK( ) OVER ( ORDER BY COLUMN ) - 등수를 붙이지만, 공동 N등 후에 N+1등이 된다.
+
+SELECT DENSE_RANK( ) OVER ( ORDER BY COLUMN1 ), COLUMN2, COLUMN3
+FROM TABLE;
+
+SELECT DENSE_RANK( ) OVER ( PARTITION BY WRITER_ID ORDER BY COLUMN ), COLUMN
+FROM TABLE;
+
+
+
+
+
+
+
+
+
+
+
+
