@@ -1,0 +1,293 @@
+
+ 5일차 - 33~46강.
+
+
+ # 서브쿼리.
+
+원리.
+SELECT 구절의 순서를 바꿔야 하는 경우에 사용하는 것이다.
+
+사용.
+SELECT * FROM ( SELECT * FROM TABLE ORDER BY COLUMN DESC ) 
+WHERE ROWNUM BETWEEN 1 AND B; 
+
+SELECT COLUMN FROM TABLE
+WHERE COLUMN > ( SELECT AVG(COLUMN) FROM TABLE )
+
+주의사항.
+SELECT 구절의 순서는 꼭 지켜야 된다.
+SELECT 구절의 각각의 어떤 값이 들어가야되는지 이해가 필요하다.
+
+
+
+ # JOIN. ( INNER JOIN )
+
+원리.
+서로 관계성을 있는 DATA를 합쳐서 사용하는 것이다.
+
+용어설명.
+부모테이블 : 내 TABLE을 DATA를 기반으로 어떤 자식테이블이 생성된 경우.
+자식테이블 : 부모테이블의 DATA를 기반으로 어떤 테이블이 생성됨.
+INNER : 관계가 있는 DATA만 JOIN.
+OUTER : 관계가 없는 DATA를 포함해서 JOIN.
+
+설명.
+부모 테이블 자식테이블을 형성함으로써 중복을 제거하여 저장 공간의 효율성을 높일 수 있다.
+INNER 조인을 하면 TABLE1과 TABLE2에 관계가 없는 DATA를 제거하고 JOIN한다.
+
+사용.
+SELECT * FROM TABLE1 
+(INNER) JOIN TABLE2 ON TABLE1.COLUMN = TABLE2.COLUMN;
+
+주의사항.
+INNER를 생략할 수 있다.
+
+
+
+ # OUTER JOIN.
+
+설명.
+두 개의 TABLE을 결합할때 하나의 TABLE밖에 없는 OUTER DATA까지 같이 JOIN하는 것이다.
+
+종류.
+LEFT OUTER : TABLE1의 OUTER를 합쳐준다.
+RIGHT OUTER : TABLE2의 OUTER를 합쳐준다.
+FULL OUTER : 모든 TABLE의 OUTER를 합쳐준다.
+
+사용.
+SELECT * FROM TABLE1
+RIGHT OUTER TABLE2 ON TABLE1.COLUMN = TABLE2.COLUMN;
+
+주의사항.
+LEFT, RIGHT를 사용하면 OUTER를 생략할 수 있다. ( INNER와 구분해서 생각 )
+FULL OUTER를 하면 LEFT OUTER DATA가 들어간 후에 RIGHT OUTER DATA가 들어간다.
+비어있는 DATA는 NULL로 채워진다.
+
+
+
+ # JOIN 추가 설명.
+
+사용.
+SELECT T1.COLUMN, T2.COLUMN COUNT( T1.COLUMN ) 
+FROM TABLE1 T1
+LEFT JOIN TABLE2 T2 ON T1.COLUMN = T2.COLUMN
+GROUP BY T1.COLUMN, T2.COLUMN;
+
+JOIN 주의사항.
+SELECT 구절에서 사용하는 COLUMN은 JOIN하면 그냥 사용할 순 없고,
+GROUP BY를 통해 집계해야만 사용할 수 있다.
+
+팁.
+TABLE1과 TABLE2중에 모든 DATA를 뽑아야되는 주요 TABLE을 정해주는 것이 중요.
+
+
+
+ # SELF JOIN.
+
+원리.
+TABLE1과 TABLE2 모두 자기 자신으로 사용해서 자기 자신의 COLUMN을 JOIN 후 추가한다.
+
+설명.
+자기 TABLE을 합치는 것을 의미한다.
+
+사용.
+SELECT T.*, T2.COLUMN AS NAME FROM TABLE T1
+LEFT JOIN TABLE T2 ON T1.COLUMN = T2.COLUMN;
+
+주의사항.
+T1과 T2가 같은 TABLE이기 때문에 별칭을 잘 써야한다.
+
+
+
+ # ORACLE JOIN.
+
+설명.
+ORACLE에서만 썼던 옛날 방식.
+
+사용.
+SELECT * FROM TABLE1 T1, TABLE2 T2
+WHERE T1.COLUMN = T2.COLUMN;
+
+주의사항.
+따로 공부하지 않아도 된다. ( ORACLE에서만 사용하는 옛날 방식 )
+
+
+
+ # UNION
+
+원리.
+레코드(행)을 합칠때 사용한다. ( COLUMN - 열의 갯수가 맞아야된다 )
+
+사용.
+SELCECT COLUMN1, COLUMN2 FROM TABLE1
+UNION
+SELECT COLUMN1, COLUMN2 FROM TABLE2
+
+종류
+UNION : 중복된 DATA는 하나만 표시한다.
+UNION ALL : 중복된 DATA도 모두 표시한다.
+MINUS : TABLE1에서 TABLE2를 뺀다.
+INTERSECT : 공통된 DATA만 표시한다.
+
+
+
+ # VIEW 만들기.
+
+원리.
+내가 자주 보는 관계있는 테이블( DATA )들을 VIEW로 저장해놓고 한 번에 사용할 수 있게 도와줌.
+
+용어설명.
+VIEW : DATABASE들 중에서 내가 보는 만큼.
+
+설정.
+CREATE VIEW TABLE_VIEW ;
+
+사용.
+SELECT * FROM TABLE_VIEW;
+
+뷰의의미.
+TABLE보다 좁은 정보를 보여줌으로써 보여주기 싫은 DATA를 제한할 수 있고,
+적은 CODE로 쉽게 검색할 수 있도록 도와준다.
+
+
+
+ # 데이터 딕셔너리.
+
+원리.
+ORACLE에서 DATA를 담는 공간. ( 사용자 정보, 권한 등을 저장 )
+VIEW로 많은 정보를 저장해서 VIEW이름으로 DATA를 확인할 수 있다.
+
+설명.
+DEVELOPER가 발달하면서 GUI로 쉽게 확인할 수 있기 때문에
+CMD에서 데이터 딕셔너리를 물어보는 방식을 많이 사용하지 않게 되었다.
+
+사용.
+SELECT * FROM DICT;                 ( VIEW 확인 )
+SELECT * FROM DBA_TABLES;       ( DICT VIEW 검색 )
+SELECT * FROM USER_TABLES;
+
+주의사항.
+DEVELOPER를 통해 정보를 확인하는게 더 효율적이다.
+
+
+
+ # 제약조건. ( 도메인 )
+
+원리.
+데이터의 무결성을 위해 데이터에 제약조건을 거는 것이다.
+
+제약조건 종류.
+1. 도메인.
+2. 엔티티.
+3. 릴레이션.
+
+도메인.
+NOT NULL : DATA를 무조건 넣어야함.
+DEFAULT : 입력하지 않을때 DEFAULT 값을 가지는 것.
+CHECK : 값의 유효범위(도메인범위).
+
+NOT NULL 사용법. 
+CREATE TABLE TABLE_NAME
+(
+    ID VARCHAR2(50) NOT NULL,
+    .....
+)
+
+DEFAULT 사용법.
+CREATE TABLE TABLE_NAME
+(
+    PWD VARCHAR2(50) DEFAULT '111',
+    ....
+)
+
+
+
+ # 체크 제약조건. ( 도메인 )
+
+CHECK 사용법.
+CREATE TABLE TABLE_NAME
+(
+    PHONE VARCHAR2(200) CHECK(PHONE LIKE '010-%-____' ) NOT NULL
+)
+
+DEVELOPER
+TABLE -> 편집 -> 제약조건 -> 제약조건 추가 -> TABLE LIKE '조건'
+
+주의사항.
+체크사항을 설정할 때는 NOT NULL을 해야된다. 
+
+
+
+ # 정규식을 이용한 체크 조약조건.
+
+DEVELTOPER 사용.
+REGEXP_LIKE(PHONE, '01[016789]]-\d{3 || 4}-\d{4}')
+
+워크시트 사용.
+ALTER TABLE TABLE_NAME
+ADD CONSTRAINT CHECK_NAME
+CHECK(REGEXP_LIKE( PHONE, '^01[01]-\d{3 || 4 }-\d{4}$')
+
+
+
+ # ENTITY 제약조건.
+
+원리.
+데이터를 관리하기 위해 중복된 레코드가 없도록 하는 COLUMN, 식별 KEY가 필요하다.
+
+종류.
+1. PRIMARY KEY : 중복이 불가하고, NULL이 안된다.
+2. UNIQUE : 중복이 불가하고, NULL이 가능하다.
+
+PRIMARY KEY 사용.
+CREATE TABLE TABLE_NAME
+(
+      ID VARCHAR2(50) (CONSTRAINT 가명) PRIMARY KEY,
+      ... , 
+      CONSTRAINT 가명 PRIMARY KEY(ID)
+)
+둘 중에 하나로 사용가능.
+
+UNIQUE 사용.
+CREATE TABLE TABLE_NAME
+(
+     ID VARCHAR2(50) (CONSTRAINT 가명) UNIQUE,
+     ... ,
+     CONSTRAINT 가명 UNIQUE( ID );
+)
+
+DEVELOPER
+UNIQUE : TABLE -> 편집 -> 제약조건 -> 새 고유 제약조건 -> COLUMN 선택. 
+PRIMARY KEY : TABLE -> 편집 -> 클릭.
+
+
+
+ # SEQUENCE 제약조건.
+
+용어설명.
+SEQUENCE : 일련번호. 
+
+DEVELOPER 사용.
+시퀀스 생성 -> 이름설정 -> 다음으로 시작 : 1 ( 안쓰면 1부터시작 ) -> 증분 ( 증가될 수 - 안적으면 1 )
+캐시 ( 미리 뽑아낼 수 설정 ).
+
+COLUMN에 설정하기.
+TABLE -> 편집 -> COLUMN 선택 -> ID열 -> 시퀀스 설정.
+
+사용.
+INSERT INTO TABLE( COLUMN ) VALUES( DATA );
+SEQUENCE를 설정한 COLUMN은 따로 INSERT 하지 않아도 알아서 증분되서 값이 들어간다.
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
